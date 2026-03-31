@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Casas de Bendición</title>
 
-<!-- Google tag (gtag.js) -->
+<!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6Y2E87MF4W"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-6Y2E87MF4W');
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-6Y2E87MF4W');
 </script>
 
-    
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"/>
+
 <style>
 * {
     box-sizing: border-box;
@@ -37,15 +38,19 @@ header {
     padding: 2em 1em;
 }
 
-header h1 {
-    font-size: 1.8em;
-}
-
 /* MAIN */
 main {
     max-width: 1100px;
     margin: auto;
     padding: 1.5em;
+}
+
+/* MAPA */
+#map {
+    height: 450px;
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 2em;
 }
 
 /* FORM */
@@ -72,36 +77,25 @@ button {
     color: white;
     border: none;
     cursor: pointer;
-    transition: 0.3s;
 }
 
-button:hover {
-    background: #005577;
-}
-
-/* GRID CASAS */
+/* GRID */
 #resultado {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 1.5em;
 }
 
-/* TARJETA */
+/* TARJETAS */
 .casa {
     background: white;
     border-radius: 12px;
     padding: 1.2em;
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    transition: transform 0.2s;
-}
-
-.casa:hover {
-    transform: translateY(-5px);
 }
 
 .casa h3 {
     color: #0077aa;
-    margin-bottom: 0.5em;
 }
 
 /* BOTONES */
@@ -119,32 +113,12 @@ button:hover {
     color: white;
 }
 
-.mapa {
-    background: #28a745;
-}
+.mapa { background: #28a745; }
+.inscribirse { background: #ff9800; }
 
-.inscribirse {
-    background: #ff9800;
-}
-
-/* MAPA */
-iframe {
-    width: 100%;
-    height: 400px;
-    border: none;
-    border-radius: 12px;
-    margin-top: 2em;
-}
-
-/* RESPONSIVE */
 @media (max-width: 600px) {
-    form {
-        flex-direction: column;
-    }
-
-    select, input, button {
-        width: 100%;
-    }
+    form { flex-direction: column; }
+    select, input, button { width: 100%; }
 }
 </style>
 </head>
@@ -153,10 +127,12 @@ iframe {
 
 <header>
     <h1>Casas de Bendición</h1>
-    <p>Encuentra la mejor opción para ti 🙌</p>
+    <p>Encuentra la mejor opción para ti</p>
 </header>
 
 <main>
+
+<div id="map"></div>
 
 <form>
     <select id="tipo">
@@ -167,19 +143,18 @@ iframe {
     </select>
 
     <input type="text" id="dia" placeholder="Día (Ej: Lunes)">
-
     <button type="button" onclick="filtrarCasas()">Buscar</button>
 </form>
 
 <section id="resultado"></section>
 
-<iframe src="https://www.google.com/maps/d/u/1/embed?mid=1d309_TUY2N88Wg8znQ-PyfsUcg-5mr0&ehbc=2E312F&noprof=1"></iframe>
-
 </main>
+
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 
 <script>
 
-// DATOS SIMULADOS (esto después lo puedes conectar a Google Sheets)
+// DATOS
 const casas = [
     {
         nombre: "Casa Jóvenes Norte",
@@ -195,7 +170,7 @@ const casas = [
         tipo: "Vida",
         dia: "Miércoles",
         hora: "20:00",
-        direccion: "Sector Centro",
+        direccion: "Centro",
         lat: -23.64,
         lng: -70.39
     },
@@ -204,74 +179,86 @@ const casas = [
         tipo: "Apoyo",
         dia: "Jueves",
         hora: "18:30",
-        direccion: "Av. Sur 456",
+        direccion: "Zona Sur",
         lat: -23.67,
         lng: -70.41
     },
     {
-        nombre: "Casa Universitarios",
+        nombre: "Universitarios",
         tipo: "Afinidad",
         dia: "Martes",
         hora: "19:30",
-        direccion: "Cerca U",
+        direccion: "Sector U",
         lat: -23.66,
         lng: -70.38
-    },
-    {
-        nombre: "Vida Jóvenes Adultos",
-        tipo: "Vida",
-        dia: "Sábado",
-        hora: "17:00",
-        direccion: "Zona Centro",
-        lat: -23.63,
-        lng: -70.37
     }
 ];
 
-// MOSTRAR
+// MAPA
+const map = L.map('map').setView([-23.65, -70.40], 12);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+}).addTo(map);
+
+// Marcadores
+function cargarMarcadores(lista) {
+    map.eachLayer(layer => {
+        if (layer instanceof L.Marker) map.removeLayer(layer);
+    });
+
+    lista.forEach(casa => {
+        const marker = L.marker([casa.lat, casa.lng]).addTo(map);
+
+        marker.bindPopup(`
+            <strong>${casa.nombre}</strong><br>
+            ${casa.tipo} - ${casa.dia}<br>
+            ${casa.direccion}
+        `);
+    });
+}
+
+// TARJETAS
 function mostrarCasas(lista) {
     const contenedor = document.getElementById("resultado");
     contenedor.innerHTML = "";
-
-    if (lista.length === 0) {
-        contenedor.innerHTML = "<p>No se encontraron resultados.</p>";
-        return;
-    }
 
     lista.forEach(casa => {
         contenedor.innerHTML += `
         <div class="casa">
             <h3>${casa.nombre}</h3>
-            <p><strong>Tipo:</strong> ${casa.tipo}</p>
-            <p><strong>Día:</strong> ${casa.dia}</p>
-            <p><strong>Hora:</strong> ${casa.hora}</p>
-            <p><strong>Dirección:</strong> ${casa.direccion}</p>
+            <p>${casa.tipo}</p>
+            <p>${casa.dia} - ${casa.hora}</p>
+            <p>${casa.direccion}</p>
 
             <div class="botones">
-                <a class="mapa" target="_blank" href="https://www.google.com/maps?q=${casa.lat},${casa.lng}">Ver mapa</a>
-                <a class="inscribirse" target="_blank" href="#">Inscribirse</a>
+                <a class="mapa" target="_blank"
+                   href="https://www.google.com/maps?q=${casa.lat},${casa.lng}">
+                   Ver mapa
+                </a>
+                <a class="inscribirse" href="#">Inscribirse</a>
             </div>
         </div>
         `;
     });
+
+    cargarMarcadores(lista);
 }
 
-// FILTRAR
+// FILTRO
 function filtrarCasas() {
     const tipo = document.getElementById("tipo").value.toLowerCase();
     const dia = document.getElementById("dia").value.toLowerCase();
 
-    const filtradas = casas.filter(casa => {
-        return (
-            (tipo === "" || casa.tipo.toLowerCase() === tipo) &&
-            (dia === "" || casa.dia.toLowerCase().includes(dia))
-        );
-    });
+    const filtradas = casas.filter(casa =>
+        (tipo === "" || casa.tipo.toLowerCase() === tipo) &&
+        (dia === "" || casa.dia.toLowerCase().includes(dia))
+    );
 
     mostrarCasas(filtradas);
 }
 
-// INICIAL
+// INICIO
 mostrarCasas(casas);
 
 </script>
