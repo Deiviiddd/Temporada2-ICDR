@@ -194,42 +194,52 @@
 // DATOS (SIMULACIÓN)
 let casas = [];
 
-// CARGAR JSON
 fetch('casas.json')
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
-        casas = data;
+
+        casas = data.map(item => ({
+            nombre: item.NOMBRE,
+            tipo: item.TIPO,
+            padre: item.PADRE,
+            dia: item.DIA,
+            hora: item.HORA,
+            direccion: item.LUGAR,
+            modalidad: item.MODALIDAD,
+            cobertura: item.COBERTURA,
+            edades: item.EDADES,
+            sector: item.SECTOR,
+
+            // TEMPORAL (hasta que tengas coordenadas reales)
+            lat: -23.65 + (Math.random() * 0.05),
+            lng: -70.40 + (Math.random() * 0.05)
+        }));
+
         mostrarCasas(casas);
-    })
-    .catch(error => {
-        console.error("Error cargando JSON:", error);
     });
 // MOSTRAR TARJETAS
 function mostrarCasas(lista) {
     const contenedor = document.getElementById("resultado");
     contenedor.innerHTML = "";
 
-    if (lista.length === 0) {
-        contenedor.innerHTML = "<p>No se encontraron resultados.</p>";
-        return;
-    }
-
     lista.forEach(casa => {
         contenedor.innerHTML += `
         <div class="casa">
             <h3>${casa.nombre}</h3>
+
             <p><strong>Tipo:</strong> ${casa.tipo}</p>
+            <p><strong>Padre:</strong> ${casa.padre}</p>
             <p><strong>Día:</strong> ${casa.dia}</p>
             <p><strong>Hora:</strong> ${casa.hora}</p>
+            <p><strong>Edades:</strong> ${casa.edades}</p>
+            <p><strong>Modalidad:</strong> ${casa.modalidad}</p>
+            <p><strong>Sector:</strong> ${casa.sector}</p>
             <p><strong>Dirección:</strong> ${casa.direccion}</p>
 
             <div class="botones">
                 <a class="mapa" target="_blank"
-                   href="https://www.google.com/maps?q=${casa.lat},${casa.lng}">
+                   href="https://www.google.com/maps?q=${encodeURIComponent(casa.direccion)}">
                    Ver mapa
-                </a>
-                <a class="inscribirse" target="_blank" href="#">
-                   Inscribirse
                 </a>
             </div>
         </div>
