@@ -192,45 +192,18 @@
 <script>
 
 // DATOS (SIMULACIÓN)
-const casas = [
-    {
-        nombre: "Casa Jóvenes Norte",
-        tipo: "Afinidad",
-        dia: "Lunes",
-        hora: "19:00",
-        direccion: "Av. Norte 123",
-        lat: -23.65,
-        lng: -70.40
-    },
-    {
-        nombre: "Vida Matrimonios",
-        tipo: "Vida",
-        dia: "Miércoles",
-        hora: "20:00",
-        direccion: "Centro",
-        lat: -23.64,
-        lng: -70.39
-    },
-    {
-        nombre: "Apoyo Familiar Sur",
-        tipo: "Apoyo",
-        dia: "Jueves",
-        hora: "18:30",
-        direccion: "Zona Sur",
-        lat: -23.67,
-        lng: -70.41
-    },
-    {
-        nombre: "Casa Universitarios",
-        tipo: "Afinidad",
-        dia: "Martes",
-        hora: "19:30",
-        direccion: "Sector U",
-        lat: -23.66,
-        lng: -70.38
-    }
-];
+let casas = [];
 
+// CARGAR JSON
+fetch('casas.json')
+    .then(response => response.json())
+    .then(data => {
+        casas = data;
+        mostrarCasas(casas);
+    })
+    .catch(error => {
+        console.error("Error cargando JSON:", error);
+    });
 // MOSTRAR TARJETAS
 function mostrarCasas(lista) {
     const contenedor = document.getElementById("resultado");
