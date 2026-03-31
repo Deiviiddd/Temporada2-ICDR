@@ -198,29 +198,43 @@ fetch('casas.json')
     .then(res => res.json())
     .then(data => {
 
-        casas = data.map(item => ({
-            nombre: item.NOMBRE,
-            tipo: item.TIPO,
-            padre: item.PADRE,
-            dia: item.DIA,
-            hora: item.HORA,
-            direccion: item.LUGAR,
-            modalidad: item.MODALIDAD,
-            cobertura: item.COBERTURA,
-            edades: item.EDADES,
-            sector: item.SECTOR,
+        casas = data
+            // 🔥 FILTRO CLAVE (elimina fichas vacías)
+            .filter(item => item.NOMBRE && item.NOMBRE.trim() !== "")
+            
+            .map(item => ({
+                nombre: item.NOMBRE,
+                tipo: item.TIPO,
+                padre: item.PADRE,
+                dia: item.DIA ? item.DIA.toLowerCase() : "",
+                hora: item.HORA,
+                direccion: item.LUGAR,
+                modalidad: item.MODALIDAD,
+                cobertura: item.COBERTURA,
+                edades: item.EDADES,
+                sector: item.SECTOR,
 
-            // TEMPORAL (hasta que tengas coordenadas reales)
-            lat: -23.65 + (Math.random() * 0.05),
-            lng: -70.40 + (Math.random() * 0.05)
-        }));
+                lat: -23.65 + (Math.random() * 0.05),
+                lng: -70.40 + (Math.random() * 0.05)
+            }));
 
         mostrarCasas(casas);
+    })
+    .catch(error => {
+        console.error("Error cargando JSON:", error);
+        document.getElementById("resultado").innerHTML =
+            "<p>Error cargando datos.</p>";
     });
+    
 // MOSTRAR TARJETAS
 function mostrarCasas(lista) {
     const contenedor = document.getElementById("resultado");
     contenedor.innerHTML = "";
+
+    if (lista.length === 0) {
+        contenedor.innerHTML = "<p>No se encontraron resultados.</p>";
+        return;
+    }
 
     lista.forEach(casa => {
         contenedor.innerHTML += `
@@ -229,7 +243,7 @@ function mostrarCasas(lista) {
 
             <p><strong>Tipo:</strong> ${casa.tipo}</p>
             <p><strong>Padre:</strong> ${casa.padre}</p>
-            <p><strong>Día:</strong> ${casa.dia}</p>
+            <p><strong>Día:</strong> ${casa.dia.charAt(0).toUpperCase() + casa.dia.slice(1)}</p>
             <p><strong>Hora:</strong> ${casa.hora}</p>
             <p><strong>Edades:</strong> ${casa.edades}</p>
             <p><strong>Modalidad:</strong> ${casa.modalidad}</p>
@@ -253,8 +267,8 @@ function filtrarCasas() {
     const dia = document.getElementById("dia").value.toLowerCase();
 
     const filtradas = casas.filter(casa =>
-        (tipo === "" || casa.tipo.toLowerCase() === tipo) &&
-        (dia === "" || casa.dia.toLowerCase().includes(dia))
+        (tipo === "" || casa.tipo.toLowerCase().includes(tipo)) &&
+        (dia === "" || casa.dia.includes(dia))
     );
 
     mostrarCasas(filtradas);
