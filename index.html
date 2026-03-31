@@ -1,75 +1,269 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Casas de Bendición</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: #004466;
-            color: white;
-            padding: 1em;
-            text-align: center;
-        }
-        main {
-            padding: 2em;
-        }
-        .casa {
-            border: 1px solid #ccc;
-            padding: 1em;
-            margin-bottom: 1em;
-        }
-        iframe {
-            display: block;
-            margin: 2em auto;
-            border: none;
-            width: 100%;
-            max-width: 640px;
-            height: 480px;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Casas de Bendición</h1>
-    </header>
-    <main>
-        <h2>Buscar Casa</h2>
-        <form id="buscador">
-            <label for="tipo">Tipo de Casa:</label>
-            <select id="tipo">
-                <option value="">Todas</option>
-                <option value="Afinidad">Afinidad</option>
-                <option value="Vida">Vida</option>
-                <option value="Apoyo">Apoyo</option>
-            </select>
-            <label for="dia">Día:</label>
-            <input type="text" id="dia" placeholder="Ej: Lunes, Miércoles">
-            <button type="button" onclick="filtrarCasas()">Buscar</button>
-        </form>
-        <section id="resultado">
-            <!-- Aquí se llenarán los resultados -->
-            <div class="casa">
-                <h3>Casa de Ejemplo</h3>
-                <p>Tipo: Afinidad</p>
-                <p>Día: Lunes</p>
-                <p>Hora: 19:00</p>
-                <p>Dirección: Calle Ficticia 123</p>
-            </div>
-            <!-- Puedes añadir más bloques de casas aquí o generarlos dinámicamente con JS -->
-        </section>
-        <iframe src="https://www.google.com/maps/d/u/1/embed?mid=1d309_TUY2N88Wg8znQ-PyfsUcg-5mr0&ehbc=2E312F&noprof=1" width="640" height="480"></iframe>
-    </main>
-</body>
-<script>
-    function filtrarCasas() {
-        // Aquí puedes implementar la lógica de filtrado, revisando el valor de 'tipo' y 'dia'
-        alert('Función de filtrado en desarrollo');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casas de Bendición</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f4f6f9;
+    color: #333;
+}
+
+/* HEADER */
+header {
+    background: linear-gradient(135deg, #004466, #0077aa);
+    color: white;
+    text-align: center;
+    padding: 2em 1em;
+}
+
+header h1 {
+    font-size: 1.8em;
+}
+
+/* MAIN */
+main {
+    max-width: 1100px;
+    margin: auto;
+    padding: 1.5em;
+}
+
+/* FORM */
+form {
+    background: white;
+    padding: 1em;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    justify-content: center;
+    margin-bottom: 2em;
+}
+
+select, input, button {
+    padding: 0.6em;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background: #0077aa;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #005577;
+}
+
+/* GRID CASAS */
+#resultado {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5em;
+}
+
+/* TARJETA */
+.casa {
+    background: white;
+    border-radius: 12px;
+    padding: 1.2em;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: transform 0.2s;
+}
+
+.casa:hover {
+    transform: translateY(-5px);
+}
+
+.casa h3 {
+    color: #0077aa;
+    margin-bottom: 0.5em;
+}
+
+/* BOTONES */
+.botones {
+    margin-top: 1em;
+    display: flex;
+    gap: 0.5em;
+}
+
+.botones a {
+    text-decoration: none;
+    padding: 0.4em 0.7em;
+    border-radius: 6px;
+    font-size: 0.9em;
+    color: white;
+}
+
+.mapa {
+    background: #28a745;
+}
+
+.inscribirse {
+    background: #ff9800;
+}
+
+/* MAPA */
+iframe {
+    width: 100%;
+    height: 400px;
+    border: none;
+    border-radius: 12px;
+    margin-top: 2em;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+    form {
+        flex-direction: column;
     }
+
+    select, input, button {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Casas de Bendición</h1>
+    <p>Encuentra la mejor opción para ti 🙌</p>
+</header>
+
+<main>
+
+<form>
+    <select id="tipo">
+        <option value="">Tipo (Todos)</option>
+        <option value="Afinidad">Afinidad</option>
+        <option value="Vida">Vida</option>
+        <option value="Apoyo">Apoyo</option>
+    </select>
+
+    <input type="text" id="dia" placeholder="Día (Ej: Lunes)">
+
+    <button type="button" onclick="filtrarCasas()">Buscar</button>
+</form>
+
+<section id="resultado"></section>
+
+<iframe src="https://www.google.com/maps/d/u/1/embed?mid=1d309_TUY2N88Wg8znQ-PyfsUcg-5mr0&ehbc=2E312F&noprof=1"></iframe>
+
+</main>
+
+<script>
+
+// DATOS SIMULADOS (esto después lo puedes conectar a Google Sheets)
+const casas = [
+    {
+        nombre: "Casa Jóvenes Norte",
+        tipo: "Afinidad",
+        dia: "Lunes",
+        hora: "19:00",
+        direccion: "Av. Norte 123",
+        lat: -23.65,
+        lng: -70.40
+    },
+    {
+        nombre: "Vida Matrimonios",
+        tipo: "Vida",
+        dia: "Miércoles",
+        hora: "20:00",
+        direccion: "Sector Centro",
+        lat: -23.64,
+        lng: -70.39
+    },
+    {
+        nombre: "Apoyo Familiar Sur",
+        tipo: "Apoyo",
+        dia: "Jueves",
+        hora: "18:30",
+        direccion: "Av. Sur 456",
+        lat: -23.67,
+        lng: -70.41
+    },
+    {
+        nombre: "Casa Universitarios",
+        tipo: "Afinidad",
+        dia: "Martes",
+        hora: "19:30",
+        direccion: "Cerca U",
+        lat: -23.66,
+        lng: -70.38
+    },
+    {
+        nombre: "Vida Jóvenes Adultos",
+        tipo: "Vida",
+        dia: "Sábado",
+        hora: "17:00",
+        direccion: "Zona Centro",
+        lat: -23.63,
+        lng: -70.37
+    }
+];
+
+// MOSTRAR
+function mostrarCasas(lista) {
+    const contenedor = document.getElementById("resultado");
+    contenedor.innerHTML = "";
+
+    if (lista.length === 0) {
+        contenedor.innerHTML = "<p>No se encontraron resultados.</p>";
+        return;
+    }
+
+    lista.forEach(casa => {
+        contenedor.innerHTML += `
+        <div class="casa">
+            <h3>${casa.nombre}</h3>
+            <p><strong>Tipo:</strong> ${casa.tipo}</p>
+            <p><strong>Día:</strong> ${casa.dia}</p>
+            <p><strong>Hora:</strong> ${casa.hora}</p>
+            <p><strong>Dirección:</strong> ${casa.direccion}</p>
+
+            <div class="botones">
+                <a class="mapa" target="_blank" href="https://www.google.com/maps?q=${casa.lat},${casa.lng}">Ver mapa</a>
+                <a class="inscribirse" target="_blank" href="#">Inscribirse</a>
+            </div>
+        </div>
+        `;
+    });
+}
+
+// FILTRAR
+function filtrarCasas() {
+    const tipo = document.getElementById("tipo").value.toLowerCase();
+    const dia = document.getElementById("dia").value.toLowerCase();
+
+    const filtradas = casas.filter(casa => {
+        return (
+            (tipo === "" || casa.tipo.toLowerCase() === tipo) &&
+            (dia === "" || casa.dia.toLowerCase().includes(dia))
+        );
+    });
+
+    mostrarCasas(filtradas);
+}
+
+// INICIAL
+mostrarCasas(casas);
+
 </script>
+
+</body>
 </html>
