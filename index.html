@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casas de Bendición</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #004466;
+            color: white;
+            padding: 1em;
+            text-align: center;
+        }
+        main {
+            padding: 2em;
+        }
+        .casa {
+            border: 1px solid #ccc;
+            padding: 1em;
+            margin-bottom: 1em;
+        }
+        iframe {
+            display: block;
+            margin: 2em auto;
+            border: none;
+            width: 100%;
+            max-width: 640px;
+            height: 480px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Casas de Bendición</h1>
+    </header>
+    <main>
+        <h2>Buscar Casa</h2>
+        <form id="buscador">
+            <label for="tipo">Tipo de Casa:</label>
+            <select id="tipo">
+                <option value="">Todas</option>
+                <option value="Afinidad">Afinidad</option>
+                <option value="Vida">Vida</option>
+                <option value="Apoyo">Apoyo</option>
+            </select>
+            <label for="dia">Día:</label>
+            <input type="text" id="dia" placeholder="Ej: Lunes, Miércoles">
+            <button type="button" onclick="filtrarCasas()">Buscar</button>
+        </form>
+        <section id="resultado">
+            <!-- Aquí se llenarán los resultados -->
+            <div class="casa">
+                <h3>Casa de Ejemplo</h3>
+                <p>Tipo: Afinidad</p>
+                <p>Día: Lunes</p>
+                <p>Hora: 19:00</p>
+                <p>Dirección: Calle Ficticia 123</p>
+            </div>
+            <!-- Puedes añadir más bloques de casas aquí o generarlos dinámicamente con JS -->
+        </section>
+        <iframe src="https://www.google.com/maps/d/u/1/embed?mid=1d309_TUY2N88Wg8znQ-PyfsUcg-5mr0&ehbc=2E312F&noprof=1" width="640" height="480"></iframe>
+    </main>
+</body>
+<script>
+    function filtrarCasas() {
+        // Aquí puedes implementar la lógica de filtrado, revisando el valor de 'tipo' y 'dia'
+        alert('Función de filtrado en desarrollo');
+    }
+</script>
+</html>
